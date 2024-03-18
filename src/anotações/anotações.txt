@@ -1,0 +1,115 @@
+no typescript você tem diversos jeitos de fazer um campo opcional segue abaixo essas formas:
+
+    exemplo: 
+        Partial<Type>:
+            interface Pessoa {
+            nome: string;
+            idade: number;
+            email?: string;
+            }
+
+            type PessoaOpcional = Partial<Pessoa>;
+
+            const pessoa: PessoaOpcional = { nome: "Alice" }; // Todos os campos são opcionais
+
+    exemplo:
+        campo opcionais:
+        interface Pessoa {
+        nome: string;
+        idade?: number; // Tornando a idade opcional
+        email?: string; // Uso de campo opcional
+        }
+
+        const pessoa: Pessoa = { nome: "Alice" }; // Uso de campo opcional
+
+    exemplo:
+        o tipo Pick permite criar um campo opcional sem a necessidade de discriminar na interface.
+        interface Pessoa {
+        nome: string;
+        idade: number;
+        email: string;
+        }
+
+        type InfoPessoal = Pick<Pessoa, "nome" | "idade">;
+
+        const info: InfoPessoal = { nome: "Bob", idade: 30 };
+    
+    exemplo: 
+        o tipo exclude exclui alguns valores que o campo poderia receber.
+
+            type Cor = "vermelho" | "verde" | "azul";
+            type CoresExcluidas = Exclude<Cor, "vermelho" | "verde">;
+
+            const cor: CoresExcluidas = "azul"; // "azul" é o único valor permitido
+
+    exemplo:
+    caso queira permitir campos nulos na entity você pode escrever da seguinte forma:
+        @Column({ nullable: true })
+        foto?: string; 
+        @Column({ nullable: true })
+        endereco?: string; 
+
+
+obs: o tipo unknown é mais especifico que o tipo any, pois 
+exige que será sempre confirmado o tipo
+do dados de usar ele, exemplo:
+        let valor: unknown;
+
+        // Você deve verificar o tipo antes de usar
+        if (typeof valor === 'string') {
+          let comprimentoString: number = valor.length; // Seguro, pois TypeScript sabe que é uma string
+        }
+
+
+tipos utilitários
+    Partial:
+    torna todos os campos opcionais,exemplo:
+        interface Pessoa {
+        nome: string;
+        idade: number;
+        }
+
+        // Com Partial, todas as propriedades de Pessoa são opcionais
+        type PessoaOpcional = Partial<Pessoa>;
+
+        const alguem: PessoaOpcional = { nome: "Ana" }; // idade é opcional agora
+
+    Required:
+    torna todos os campos oprigatórios:
+        interface PessoaOpcional {
+            nome?: string;
+            idade?: number;
+        }
+        
+        // Com Required, todas as propriedades de PessoaOpcional são obrigatórias novamente
+        type PessoaCompleta = Required<PessoaOpcional>;
+
+        const pessoa: PessoaCompleta = { 
+        // Agora tanto nome quanto idade são necessários
+        nome: "Carlos",
+        idade: 25
+        };
+
+    Readonly:
+    permite apenas a leitura dos dados,exemplo:
+        type PessoaImutavel = Readonly<Pessoa>;
+
+        const joao: PessoaImutavel = { nome: "João", idade: 30 };
+
+        // Isso resultaria em erro, pois as propriedades são somente leitura
+        // joao.idade = 31;
+
+    Record:
+    permite definir o tipo da chave e o tipo do valor da chave em um objeto, exemplo:
+    // Cria um objeto onde as chaves são strings e os valores são números
+        type Resultados = Record<string, number>;
+
+        const notas: Resultados = {
+        matematica: 10,
+        portugues: 9,
+        ciencias: 8
+        };
+
+
+    middleware: é uma função que é executada dentro do controller com o objetivo de fazer
+    algum tratamento no dados
